@@ -191,9 +191,9 @@ c xx variance expliquee par les qtl, en equivalent petits qtl
       
 c vq=variance de chaque qtl, chr=chrom du qtl, imc=position intra chrom, imt=position globale, effet=effet, all=allele a effet positif
       allocate (vq(nq),chr(nq),imc(nq),imt(nq),effet(nq),all(nq))
-      do i=1, nqp; vq(i)=x;      end do
+      do i=1, nqg; vq(i)=v1g*x;      end do
       do i=1, nqm; vq(nqp+i)=v1m*x;  end do
-      do i=1, nqg; vq(nqp+nqm+i)=v1g*x; end do
+      do i=1, nqp; vq(nqp+nqm+i)=x; end do
 
 
 c on calcule le nombre de marqueurs par chrom et les freq alleliques
