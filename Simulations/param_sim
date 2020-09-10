@@ -1,0 +1,18 @@
+Example/format of parameters file:
+
+8500 0 5                                #number of small, medium, big QTLs
+0.8 1                                   #heritability, part of genetic variance explained by QTLs
+0.0001 0 0.03                           #part of variance explained by each small, medium and big QTL
+29                                      #number of chromosome, 0 one phase file 
+'/myfiles/ped_seq'                      #path of pedigree file 
+'/myfiles/phase_50K_'                   #if number of chromosome=0, 'path/name' of the files, if not all the phase phase should have the name 'path/name'1 for chromosome 1, etc
+out_phase_                              #markers files, for each chromosome
+info_QTL                                #information on simulated QTLs
+phase                                   #genotyping file name
+simperf                                 #simulated phenotypes file name
+frq_sim                                 #SNP frequency file name
+0.15                                    #minimum MAF
+o                                       #Do we keep QTL in the markers file? o (Oui/Yes) n (Non/No) 
+p                                       #Input: P or p for phases files (2 lines/individual), T or t for typages (1 line/individual)
+p                                       #Output: P or p for phases files (2 lines/individual), T or t for typages (1 line/individual)
+1                                       #seed
