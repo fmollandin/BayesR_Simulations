@@ -1,8 +1,8 @@
 Example/format of parameters file:
 
-8500 0 5                                #number of small, medium, big QTLs
+5 0 8500                                #number of big, medium, small QTLs
 0.8 1                                   #heritability, part of genetic variance explained by QTLs
-0.0001 0 0.03                           #part of variance explained by each small, medium and big QTL
+0.03 0 0.0001                           #part of variance explained by each big, medium and small QTL (or relative variance between big, medium, low and low variances)
 29                                      #number of chromosome, 0 one phase file 
 '/myfiles/ped_seq'                      #path of pedigree file 
 '/myfiles/phase_50K_'                   #if number of chromosome=0, 'path/name' of the files, if not all the phase phase should have the name 'path/name'1 for chromosome 1, etc
