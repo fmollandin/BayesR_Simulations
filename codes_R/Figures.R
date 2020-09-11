@@ -1,10 +1,6 @@
-setwd("C:/Sauvegarde/fmollandin (JJ-1313-SRVDATAuser)/Résultats")
-
 library(ggplot2)
 library(tidyverse)
 library(reshape2)
-library(pROC)
-library(xlsx)
 library(knitr)
 library(circlize)
 library(plotly)
