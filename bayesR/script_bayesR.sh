@@ -14,6 +14,6 @@ burn=30000
 
 
 
-../bayesR/bayesR_Fanny2 -bfile $app -out $app_out -seed 14 -ndist $ncat -gpin $varcat -vara $vara -numit $it -burnin $burn 
+./bayesR -bfile $app -out $app_out -seed 14 -ndist $ncat -gpin $varcat -vara $vara -numit $it -burnin $burn 
 
-../bayesR/bayesR_Fanny2 -bfile $test -predict -ndist $ncat -gpin $varcat -out $test_out -model $app_out.model -freq $app_out.frq -param $app_out.param 
+./bayesR -bfile $test -predict -ndist $ncat -gpin $varcat -out $test_out -model $app_out.model -freq $app_out.frq -param $app_out.param 
