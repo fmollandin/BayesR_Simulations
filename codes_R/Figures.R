@@ -11,20 +11,6 @@ library(gridExtra)
 library(cowplot)
 source("functions_aux.R")
 
-## Read in Data -------------------------------------------------------------------------
-scenarios=read.xlsx("Copie de Sim_Param.xlsx",sheetIndex = 1,header=F,encoding = "UTF-8")
-scenarios=scenarios[-22,]
-rownames(scenarios)=scenarios[,1]
-scenarios=scenarios[,-1]
-scenarios=scenarios[,17:29]
-colnames(scenarios)=c("R","S","T","U","V","W","X","Y","Z","AA","AB","AC","Ref")
-liste_names=colnames(scenarios)
-nscen=length(liste_names)
-liste_names_wo=paste(liste_names,"wo",sep="")
-df_pi3<-data.frame(Scenario=colnames(scenarios),pi3=t(scenarios["pi3",]))
-df_var<-data.frame(Scenario=colnames(scenarios),Var=t(scenarios["pi3",])*80)
-colnames(df_var)=c("Scenario","Var")
-
 ## Figure 1 -----------------------------------------------------------------------------
 
 ## Notes:
