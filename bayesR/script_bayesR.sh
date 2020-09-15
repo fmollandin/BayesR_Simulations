@@ -1,29 +1,13 @@
 #!/bin/sh
-#$ -m e
-#$ -M fanny.mollandin@inrae.fr
-#$ -l h_vmem=1G
-#$ -q longq
 
-#cat=upstream
-#perf=perf1
-
-#input_app=$cat'_'$perf'_app'
-#input_test=$cat'_'$perf'_test'
-#output_app=$cat'_'$perf'_app'
-#output_test=$cat'_'$perf'_test'
-
-scenario=$1
-id=$2
-
-app=sim_$scenario$id'_app'
-test=sim_$scenario$id'_test'
-app_out=sim_$scenario$id'_x0.5_app'
-test_out=sim_$scenario$id'_x0.5_test'
+app=sim_app
+test=sim_test
+app_out=sim_app
+test_out=sim_test
 
 
 ncat=4
-varcat=0.0,0.0001,0.001,0.005
-vara=0.8
+varcat=0.0,0.0001,0.001,0.01
 it=50000
 burn=30000
 
