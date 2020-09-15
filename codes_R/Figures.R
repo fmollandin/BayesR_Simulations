@@ -467,14 +467,6 @@ fig6 <- ggplot(data=df_comp_QTL, aes(x=as.factor(pi3), y=Detected, fill=Method))
 ggsave(fig6, filename="Figure_6.pdf",
        width = 12, height = 8, device = cairo_pdf)
 
-# Eventual supplementary plot? -----------------------------------------------------------
-## Vi
-# load("df_Vi_all.RData")
-# ggplot(df_Vi_all,aes(x=pi3,y=Vi,color=h2))+
-#     facet_grid(~Data)+
-#     geom_jitter(size=0.8)+
-#     geom_crossbar(aes(ymin = Vi, ymax = Vi))
-
 
 
 
