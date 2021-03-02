@@ -5,3 +5,24 @@ _gfortran simul_ped_v2.f -o simul_ped_<br />
 and use aso so : <br />
 _./simul_ped < param_sim_
 
+The param file should include, in this order:
+5 0 8500                                #number of big, medium, small QTLs
+0.8 1                                   #heritability, part of genetic variance explained by QTLs
+0.03 0 0.0001                           #part of variance explained by each big, medium and small QTL (or relative variance between big, medium, low and low variances)
+29                                      #number of chromosome, 0 one phase file 
+'/myfiles/ped_seq'                      #path of pedigree file 
+'/myfiles/phase_50K_'                   #if number of chromosome=0, 'path/name' of the files, if not all the phase phase should have the name 'path/name'1 for chromosome 1, etc
+out_phase_                              #markers files, for each chromosome
+info_QTL                                #information on simulated QTLs
+phase                                   #genotyping file name
+simperf                                 #simulated phenotypes file name
+frq_sim                                 #SNP frequency file name
+0.15                                    #minimum MAF
+o                                       #Do we keep QTL in the markers file? o (Oui/Yes) n (Non/No) 
+p                                       #Input: P or p for phases files (2 lines/individual), T or t for typages (1 line/individual)
+p                                       #Output: P or p for phases files (2 lines/individual), T or t for typages (1 line/individual)
+1                                       #seed
+
+The file "simperf" contains the simulated phenotypes for each individual, and the file "info_QTL" contains informations on the simulated QTLs.
+simperf: id / phenotype
+info_QTL: QTL count / chromosome / index on the chromosome / index on the genome / variance / frequency / effect
