@@ -470,3 +470,148 @@ ggsave(fig6, filename="Figure_6.pdf",
 
 
 
+# BayesR AUC ------------------------------------------------------------------
+
+load("df_AUC.RData")
+levels(df_AUC$Data) <- c("50k custom", "50k")
+df_AUC$Data <- relevel(df_AUC$Data, ref = "50k")
+
+levels(df_AUC$Method)=c("CIP top 150","Vi top 10")
+
+## Toutes les QTL % of variance 
+AUC_CIP_VI_v2=ggplot(df_AUC,aes(x=h2,y=AUC,color=as.factor(pi3)))+
+  geom_line(size=1)+
+  facet_grid(Data~Method)+
+  labs(title="AUC CIP and Vi")+
+  theme_bw()+
+  labs(color="% of genetic variance per QTL")+
+  xlab("Heritability")+
+  theme(legend.title = element_text(size = 8),legend.text = element_text(size = 6))
+
+## Filter on subsection of QTL % of variance
+
+df_AUC_subset=filter(df_AUC, pi3 %in% c(0.01,0.02,0.03,0.04,0.05))
+
+AUC_CIP_Vi_v3=ggplot(df_AUC_subset,aes(x=h2,y=AUC,color=as.factor(pi3)))+
+  geom_line(size=1)+
+  facet_grid(Data~Method)+
+  theme_bw()+
+  labs(color="% of genetic\n variance per QTL")+
+  xlab("Heritability")+
+  theme(legend.title = element_text(size = 14),legend.text = element_text(size = 12),legend.position="bottom")
+
+ggsave(AUC_CIP_Vi_v3, filename="Figure_AUC_CIP_Vi_alt1.pdf",
+              width = 6, height = 6,
+              device = cairo_pdf)
+
+# Models Comparaison
+
+load("df_cor_models.RData")
+df_cor_all$Model <- relevel(df_cor_all$Model, ref = "BayesR")
+
+wescol <- wes_palette("Zissou1",5,type="discrete")
+
+df_cor_models_subset=filter(df_cor_all, Data=="50K Custom")
+
+fig_Cpi_cor<-ggplot(df_cor_models_subset,aes(x=pi3,y=Correlation,color=h2))+
+  geom_line(size=1,aes(linetype=Model))+
+  geom_point()+
+  scale_color_manual(values=wescol[-5]) +
+  theme_bw()+
+  xlab("% of genetic variance per QTL")+
+  labs(color="Heritability")+
+  theme(legend.title = element_text(size = 12),legend.text = element_text(size = 10))
+
+ggsave(fig_Cpi_cor, filename="Figure_Comp_Cor_Models.pdf",
+       width = 8, height = 6,
+       device = cairo_pdf)
+
+# Inclusion Probabilities 
+
+load("df_IP_models.RData")
+
+IP_models=ggplot(df_IP_models,aes(x=as.factor(pi3)))+
+  geom_bar(aes(y=IP,fill="red"),stat="Identity",width=1)+ 
+  geom_bar(aes(y=IP_all,fill="blue"),stat="Identity",width=1)+
+  facet_grid(Model~as.factor(h2))+
+  theme_minimal(base_size = 14) +
+  theme(legend.position = "bottom", axis.text.x = element_text(angle = 90))+
+  xlab("% genetic variance per QTL")+
+  ylab("Mean inclusion probability")+
+  scale_fill_discrete(name="SNPs:",labels = c("All", "QTLs"))
+
+#IP_models=ggplot(df_IP_models %>%
+#                   gather(key=type, value=IP, -Data, -h2, -Scenario, -Model, -pi3),
+#                 aes(x=as.factor(pi3)))+
+#  geom_bar(aes(y=IP,fill=type),stat="Identity",width=1,alpha=0.8)+ 
+#  facet_grid(Model~as.factor(h2))+
+#  theme_minimal(base_size = 12) +
+#  theme(legend.position = "bottom", axis.text.x = element_text(angle = 90))+
+#  xlab("% genetic variance per QTL")+
+#  ylab("Mean inclusion probability")+
+#  scale_fill_discrete(name="SNPs:",labels = c("All", "QTLs")) 
+
+ggsave(IP_models, filename="Figure_IP_Models.pdf",
+       width = 8, height = 6,
+       device = cairo_pdf)
+
+# Comparaison Vi
+
+load("Vi_models.RData")
+Vi_models$True_Cat=as.factor(Vi_models$True_Cat)
+levels(Vi_models$True_Cat) <- c("QTL window","QTL", "Polygenic","Null")
+wescol <- wes_palette("Zissou1",5,type="discrete")
+# https://www.color-hex.com/color/f21a00
+fig_Vi_models <- ggplot(Vi_models,aes(x=Position,y=Vi_share,color=True_Cat))+
+  geom_point(aes(x=Position,y=Vi_share,color=True_Cat))+
+  geom_point(data = subset(Vi_models, True_Cat == 'QTL window'),
+             aes(x=Position,y=Vi_share,color=True_Cat), size = 2)+
+  geom_point(data = subset(Vi_models, True_Cat == 'QTL'),
+             aes(x=Position,y=Vi_share,color=True_Cat), size = 2)+
+  facet_wrap(~Model)+
+  scale_color_manual(values=c("#f9a399", wescol[5],wescol[2],"grey"),
+                     name = "Simulated\neffect class")+
+  xlab("SNP index") +
+  ylab("Estimated proportion of genetic variance") +
+  theme_bw(base_size = 14)+
+  scale_y_continuous(trans="log10")
+
+ggsave(fig_Vi_models, filename="Figure_Vi_Models.pdf",
+       width = 10, height = 7,
+       device = cairo_pdf)
+
+# Medium posterior variance estimation
+
+load("df_Vi_comp_medium.RData")
+
+fig_medium_Vi<-ggplot(df_Vi_comp, aes(x=as.factor(pi3), fill=QTL, y=Variance)) +
+                  geom_boxplot() + 
+                  facet_wrap(~h2, scales="free")+
+                  scale_y_continuous(trans='log10')+
+                  ylab("Posterior variance")+
+                  xlab("Large QTL share of variance")+
+                  theme_bw()+
+                  scale_fill_manual(values=wescol[c(1,4)])
+
+ggsave(fig_medium_Vi, filename="Figure_Vi_Medium.pdf",
+       width = 7, height = 5,
+       device = cairo_pdf)
+
+# Medium estimated proportion of variance
+
+load("df_Vi_share_article.RData")
+
+fig_medium_Vi_share<-ggplot(df_Vi_share, aes(x=as.factor(pi3), fill=QTL, y=Variance)) +
+  geom_boxplot() + 
+  facet_wrap(~h2, scales="free")+
+  scale_y_continuous(trans='log10')+
+  ylab("Estimated proportion of genetic variance")+
+  xlab("Large QTL share of variance")+
+  theme_bw()+
+  scale_fill_manual(values=wescol[c(1,4)])
+
+ggsave(fig_medium_Vi_share, filename="Figure_Vi_Share_Medium.pdf",
+       width = 7, height = 5,
+       device = cairo_pdf)
+
+
