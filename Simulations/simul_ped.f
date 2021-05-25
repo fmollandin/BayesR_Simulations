@@ -40,7 +40,7 @@
       print *
 
 
-c *** lecture des parametres ***    
+! *** Parameters screaning ***    
       vart=100.       
       separateur=' '
       
@@ -124,10 +124,10 @@ c *** lecture des parametres ***
       print *,'Seed : ',seed2
 
 
-c Initialization of the seed
+! Initialization of the seed
       call init_random_seed(seed2)
 
-c Do we need other formats ?           
+! Do we need other formats ?           
       if (namechrs.eq.'no'.and.fi.ne.fo) then
         print *,'No markers file asked '
         print *,'while the I/O formats are different ?'
@@ -148,7 +148,7 @@ c Do we need other formats ?
         end if
 
       
-c Read the pedigree file to check that it is correct (irc from 1 to n, parent<product) and count
+! Read the pedigree file to check that it is correct (irc from 1 to n, parent<product) and count
       ng=0
       open (2,file=ficped,form='formatted')      
       do 
@@ -162,11 +162,11 @@ c Read the pedigree file to check that it is correct (irc from 1 to n, parent<pr
       close (2)
       print *,'Number of individuals in the pedigree : ',ng
       
-c y=phenotype, g=genetic value, typ=typed or untyped indicator
+! y=phenotype, g=genetic value, typ=typed or untyped indicator
       allocate (y(ng),g(ng),iani(ng),pere(ng),mere(ng),typ(ng))
       y(:)=0. ; typ(:)=.false.
 
-c 2nd reading of pedigree and stockage files
+! 2nd reading of pedigree and stockage files
       open (2,file=ficped,form='formatted')      
       do i=1,ng
        read (2,*) irc,prc,mrc
@@ -176,45 +176,45 @@ c 2nd reading of pedigree and stockage files
       close (2)
       
 
-c QTL variance
+! QTL variance
       nq=nqg+nqm+nqp
       print *,'QTL numbers : ', nq
 
       if (v1p.le.0.) stop 'Variance of small QTLS <= 0.'
       
-c We report the variances of QTL to that of the small QTL
+! We report the variances of QTL to that of the small QTL
       v1g=v1g/v1p
       v1m=v1m/v1p
 
-c xx variance explained by QTL, in small QTL equivalent
+! xx variance explained by QTL, in small QTL equivalent
       xx=nqg*v1g + nqm*v1m + nqp
       x=vart*h2*pcqtl/xx  ! part des petits qtl
       
-c vq=variance of each QTL, chr=QTL chromosome, imc=intra chromosome position, imt=overall position, effet=effect, all=positive effect allele
+! vq=variance of each QTL, chr=QTL chromosome, imc=intra chromosome position, imt=overall position, effet=effect, all=positive effect allele
       allocate (vq(nq),chr(nq),imc(nq),imt(nq),effet(nq),all(nq))
       do i=1, nqg; vq(i)=v1g*x;      end do
       do i=1, nqm; vq(nqp+i)=v1m*x;  end do
       do i=1, nqp; vq(nqp+nqm+i)=x; end do
 
 
-c we calculate the number of markers per chromosome and the allelic frequency
-c nmc = nb marq / chrom, nmcum = numbers of cumulated markers in previous chromosomes, ncuq = ?
+! we calculate the number of markers per chromosome and the allelic frequency
+! nmc = nb marq / chrom, nmcum = numbers of cumulated markers in previous chromosomes, ncuq = ?
       allocate (nmc(nchrom),nmcum(nchrom+1),ncuq(nchrom+1))
       do i=1, nchrom; nmc(i)=0; end do
       nm=0 ; ntyp=0 ; nmax=0
 
-c lecture de la premiere ligne des typages pour compter le nb de marqueurs  
+! Count the numbers of markers
       DO ICHR = 1, nchrom
        if (nchrom1.eq.0) then
          fichchr=namechr
        else
-         write(fichchr,'(a,i0)') trim(namechr),ichr ; ! cette ligne construit le nom du fichier pour le chrom ichr
+         write(fichchr,'(a,i0)') trim(namechr),ichr ; 
          end if
        open(3,file=fichchr,form='formatted')
        call lire_ligne(3,ligne,separateur,nc,finfich)                                        
        if (finfich) stop 'Le fichier de phenotypes est vide'
        close(3)
-       call lecligne(ligne,nc)    ; ! cette ligne compte le nombre de champs nc sur la ligne
+       call lecligne(ligne,nc)    ; 
        if (fi.eq.'P') then
          nc=nc-2
        else
@@ -225,20 +225,20 @@ c lecture de la premiere ligne des typages pour compter le nb de marqueurs
        nmcum(ichr)=nm
        nm=nm+nc
        end do
-      print *,'Nombre total de marqueurs : ',nm
-      print *,'Nombre maxi de marqueurs par chromosome: ',nmax
+      print *,'Notal number of markers : ',nm
+      print *,'Maximum number of markers per chromosome: ',nmax
       nmcum(nchrom+1)=nm
 
-c freq = frequences de l allele 2 par marqueur, phe = typages pour un animal et un chrom
+! freq = frequencies of the 2nd allele per marker, phe = genotype for one individual and one chromosome
       allocate (freq(nm),phe(2,nmax))
       freq(:)=0.
-
-c exploration des fichiers de typages pour compter le nb d individus, remplir typ, et verifier qu ils sont coherents entre eux
+      
+!c exploring genotype files to count individuals,fill typ and see if there are coherent
       DO ICHR = 1, nchrom
        if (nchrom1.eq.0) then
          fichchr=namechr
        else
-         write(fichchr,'(a,i0)') trim(namechr),ichr ; ! cette ligne construit le nom du fichier pour le chrom ichr
+         write(fichchr,'(a,i0)') trim(namechr),ichr ; 
          end if
       open(3,file=fichchr,form='formatted')  
       io=0 ; nt=0 ; ntyp=0
@@ -246,39 +246,39 @@ c exploration des fichiers de typages pour compter le nb d individus, remplir ty
         read(3,*,iostat=io) irc
         if (io.ne.0) exit
         nt=nt+1
-        if (irc.gt.ng) stop 'Individu type absent de pedigree'
+        if (irc.gt.ng) stop 'Individual missing from pedigree'
         typ(irc)=.true. 
         end do
       close (3)
       if (ichr.eq.1) then
         ntt=nt
       else if (nt.ne.ntt) then
-        stop 'fichiers de typages non coherents'
+        stop 'Non coherent genotype file'
         end if
       end do
-      print *, 'Nombre de lignes de typages : ',ntt
+      print *, 'Number of genotype lines : ',ntt
       ntyp=nt
       if (fi.eq.'P') then
        ntyp=ntyp/2
-       print *, 'Nombre d individus types : ',ntyp
+       print *, 'Number of indivuals : ',ntyp
        end if
 
 
-c lecture fichiers de typages pour calculer les frequences
+! Read genotypes to compute frequencies
       DO ICHR = 1, nchrom
        if (nchrom1.eq.0) then
          fichchr=namechr
        else
-         write(fichchr,'(a,i0)') trim(namechr),ichr ; ! cette ligne construit le nom du fichier pour le chrom ichr
+         write(fichchr,'(a,i0)') trim(namechr),ichr ; 
          end if
       open(3,file=fichchr,form='formatted')  
       io=0  ; nc=nmc(ichr) ; nm1=nmcum(ichr)
       do ia=1, ntyp
        if (fi.eq.'P') then   
         read(3,*) irc,i,(phe(1,j),j=1,nc)
-        if (i.ne.1) stop 'typages non phases'
+        if (i.ne.1) stop 'typages no phases'
         read(3,*) irc,i,(phe(2,j),j=1,nc)
-        if (i.ne.2) stop 'typages non phases'
+        if (i.ne.2) stop 'typages no phases'
        else
         read(3,*) irc,((phe(i,j),i=1,2),j=1,nc)
         end if
@@ -294,7 +294,7 @@ c lecture fichiers de typages pour calculer les frequences
        close(3)
        END DO
 	
-c fin de calcul des frequences et sauvegarde dans fichfreq
+! End of frequencies computation, saving 
       do i=1, nm
         freq(i)=freq(i)/dfloat(2*ntyp)
 	end do
@@ -305,11 +305,11 @@ c fin de calcul des frequences et sauvegarde dans fichfreq
         end do
       close(9)
 
-c on determine les qtl parmi les marqueurs, puis ses caracteristiques
+! we determine the QTLs among the markers, then its characteristics
       allocate(listq(nm),listm(nm))
       listq(:)=0 ; listm(:)=0
 
-c on determine les np marqueurs potentiels pour etre qtl, sur la base de la maf
+! we determine the np potential marker to be QTL, based on the MAF
       allocate(listpot(nm),chrom(nm),pos(nm))
       np=0 ; i=0
       do ichr=1, nchrom
@@ -318,22 +318,22 @@ c on determine les np marqueurs potentiels pour etre qtl, sur la base de la maf
         chrom(i)=ichr; pos(i)=ipos        
         if (freq(i).ge.minmaf.and.freq(i).le.(1.-minmaf)) then  ; 
           np=np+1
-          listpot(np)=i  ; ! listpot = liste des np marqueurs potentiels
+          listpot(np)=i  ; ! listpot = listof potential markers
           end if
         end do
        end do
       if (np.le.nq) stop 'moins de marqueurs potentiels que de qtl'
-      print *,'Nombre de marqueurs a MAF non extreme : ',np
+      print *,'Number of markers with non extrem MAF : ',np
 
-! caracteristique des nq qtl : effet (> ou <0), all=allele a effet positif, chr=chromosome, imc=position intr chrom, imt=numero d ordre global du marq, vq=variance
+! informations on the nq QTLs : effect (> or <0), all=positive allele effect, chr=chromosome, imc=intra chromosome position, imt=overall position, vq=variance
 ! listq(num_marq)=num_qtl
 
-c on choisit les qtl par tirage dans np possibilites, on stocke l info, en retire le marqueur de la liste, et on passe au suivant
+! we randomly chose the QTLs in the np possibilites, we keep the info, remove it from the list and continue with the next marker
       do i=1, nq
-c        j=1+np*rand(x)
+        j=1+np*rand(x)
         call random_number(x)
         j=1 + np*x
-	if (j.lt.1.or.j.gt.np) stop 'erreur dans le tirage des qtl'  
+	if (j.lt.1.or.j.gt.np) stop 'Error in the QTL drawing'  
 	listq(listpot(j))=i
         imt(i)=listpot(j)
         iq=listpot(j)
@@ -346,9 +346,9 @@ c        j=1+np*rand(x)
 	chr(i)=chrom(iq)
 	imc(i)=pos(iq)
 
-c tirage de l effet (positif)
+! draw of the positive allele effect
 	effet(i)=.5*sqrt(vq(i)/(2.*freq(iq)*(1.-freq(iq))))
-c tirage de l allele a effet positif
+! draw if positive or negative effect
 	all(i)=1
         call random_number(x)
 	if (x.gt.0.5)then
@@ -358,7 +358,7 @@ c tirage de l allele a effet positif
 
 	end do
 	
-c sauvegarde des caracteristiques des QTL dans fichier fichqtl
+! saving of QTLs info in fichqtl file
       open (4,file=fichqtl,form='formatted')
       do i=1, nq
         write (4,200) i,chr(i),imc(i),imt(i),vq(i),freq(imt(i)),effet(i)
@@ -366,22 +366,22 @@ c sauvegarde des caracteristiques des QTL dans fichier fichqtl
 	end do
       close(4)	
 
-c mini maxi des effets	
+! effects mini maxi 	
       xmin=effet(1); xmax=xmin
       do i=2, nq
 	  if (effet(i).lt.xmin) xmin=effet(i)
 	  if (effet(i).gt.xmax) xmax=effet(i)
 	  end do
-      print *,'Effets mini / maxi : ',xmin, xmax
+      print *,'Effects mini / maxi : ',xmin, xmax
 	
 
-c liste des marqueurs non qtl - sert a preparer les fichiers de marqueurs sans qtl
+! without QTL markers file 
       if (optmq.eq.'n') then
        j=0
        do i=1, nm
         if (listq(i).eq.0) then
 	  j=j+1
-	  listm(i)=j ;  ! listm(1:nm) contient 0 pour les qtl, 1:nm-nq pour les marqueurs non qtl ?
+	  listm(i)=j ;  ! listm(1:nm) 0 for the QTLs, 1:nm-nq for non QTL markers?
 	  end if
 	end do  
       else
@@ -390,22 +390,22 @@ c liste des marqueurs non qtl - sert a preparer les fichiers de marqueurs sans q
 	 end do
        end if
 
-c alq=alleles aux qtl, listqc contient le numero de qtl pour les qtl d un chromosome donné, listmc contient les marqueurs non qtl
+! alq=QTLs allele, listqc includes QTLs index for a given chromosome, listmc includes non QTL markers
       allocate (alq(2,nq,ntyp),listqc(nq),listmc(nm))
 
-c relecture des chromosomes pour traitement des typages   
+! rereading chromosomes for genotypes use   
       DO ICHR = 1, nchrom
        if (nchrom1.eq.0) then
          fichchr=namechr
          fichchrs=namechrs
        else
-         write(fichchr,'(a,i0)') trim(namechr),ichr ; ! cette ligne construit le nom du fichier pour le chrom ichr
-         write(fichchrs,'(a,i0)') trim(namechrs),ichr ; ! cette ligne construit le nom du fichier pour le chrom ichr
+         write(fichchr,'(a,i0)') trim(namechr),ichr ; 
+         write(fichchrs,'(a,i0)') trim(namechrs),ichr ; 
          end if
        print *,'lu    : ', fichchr (1:len_trim(fichchr))	
        print *,'ecrit : ', fichchrs(1:len_trim(fichchrs))
 
-c recherche de la liste des qtl sur le chromosome, stock de leur numéro dans listqc
+! research of the QTL list on the chromosome, saving of their index in listqc 
        nqc=0	
        do iq=1, nq
 	  if (chr(iq).eq.ichr) then
@@ -414,7 +414,7 @@ c recherche de la liste des qtl sur le chromosome, stock de leur numéro dans li
 	    end if
 	  end do  
 
-c liste des marqueurs non qtl intra chromosome, pour svg
+! list of no QTL markers in the chromosome for svg
        nc1=0
        do i=nmcum(ichr)+1, nmcum(ichr+1)
         if (listm(i).ne.0) then
@@ -427,7 +427,7 @@ c liste des marqueurs non qtl intra chromosome, pour svg
       open(3,file=fichchr,form='formatted')
       open(4,file=fichchrs,form='formatted')
 
-c lecture proprement dite pour les ntyp animaux
+! reading of individuals genotypes
       nc=nmc(ichr) ; nm1=nmcum(ichr)
       do ia=1, ntyp
        if (fi.eq.'P') then   
@@ -437,10 +437,10 @@ c lecture proprement dite pour les ntyp animaux
         read(3,*) irc,((phe(i,j),i=1,2),j=1,nc)
         end if
 
-c traitement des qtl : ajout des effets a y
+! QTLs using, effects add to y 
        do im=1, nqc
          iq=listqc(im)	
-c effets des qtl sur les performances
+! QTL effects on phenotypes
 	 if (phe(1,imc(iq)).eq.1) then
             y(irc)=y(irc)+effet(iq)
          else
@@ -452,12 +452,12 @@ c effets des qtl sur les performances
             y(irc)=y(irc)-effet(iq)
             end if
 
-c stock des alleles qtl, dans l ordre des qtl. On les sauvegardera a la fin, apres trt de tous les chromosomes
+! saving of QTL alleles, in QTL order (we save it at the end after processing all the chromosomes)
          alq(1,iq,ia)=phe(1,imc(iq))    
          alq(2,iq,ia)=phe(2,imc(iq))
 	 end do
 
-c reecriture des marqueurs si demande. 
+! rewritting of markers if asked 
         if (tecrit) then
          if (fo.eq.'P') then
           write (4,100) irc,1,(phe(1,listmc(k)),k=1,nc1)
@@ -475,19 +475,19 @@ c reecriture des marqueurs si demande.
       
       END DO	
       
-c sauvegarde des typages qtl      
+! saving of QTL genotypes      
       open (4,file=fichtypq,form='formatted')
       do i=1, ntyp
         write (4,100) iani(i),((alq(k,j,i),k=1,2),j=1,nq)
 	end do
       close(4)	      
 	 
-c ajout de la valeur polygenique	 
-      vg=h2*vart*(1.-pcqtl)  ! variance poly
-      sdg=sqrt(vg)           ! ecart type poly 
-      sdg1=sqrt(0.75*vg)     ! ecart type poly si un parent connu
-      sdg2=sqrt(0.5*vg)      ! ecart type poly si deux parents connus
-      ve=sqrt(vart*(1.-h2))  ! ecart type residuel
+! add polygenic value	 
+      vg=h2*vart*(1.-pcqtl)  ! polygenic variance
+      sdg=sqrt(vg)           ! polygenic standard deviation
+      sdg1=sqrt(0.75*vg)     ! polygenic standard deviation if one known parent
+      sdg2=sqrt(0.5*vg)      ! polygenic standard deviation if two known parents
+      ve=sqrt(vart*(1.-h2))  ! residuals standard deviation
       
       moy=0.; st=0.
       	 	 
@@ -507,7 +507,7 @@ c ajout de la valeur polygenique
 	y(i)=y(i)+g(i)+ x*ve  
 	end do
 	
-c sauvegarde des performances	
+! phenotypes saving	
       open (4,file=fichperf,form='formatted')
       moy=0.; st=0.;
       do i=1, ng
@@ -532,7 +532,7 @@ c sauvegarde des performances
       end	
  	   
 
-c lecture de ligne ****************************************
+! lines reading ****************************************
       SUBROUTINE lire_ligne(iunit,ligne,separ,nc,fin)                                        
       IMPLICIT none      
       integer nc,i,j,k,l,iunit,ll
@@ -564,7 +564,7 @@ c lecture de ligne ****************************************
 
        do i=1, l
            if (ligne(i:i).eq.' ') then
-c             ligne(i:i)='_'
+             ligne(i:i)='_'
            else if (ligne(i:i).eq.separ) then
              ligne(i:i)=' '
              nc=nc+1
@@ -578,7 +578,7 @@ c             ligne(i:i)='_'
 
       end                        
  
-c **************************************************************************
+! **************************************************************************
       subroutine lecligne(ligne,nc)
       implicit none
       character*3500000 ligne
@@ -602,7 +602,7 @@ c **************************************************************************
        return
        end
        
-c **************************************************************************  
+! **************************************************************************  
       subroutine normal(x)
       implicit none
       real x,y
