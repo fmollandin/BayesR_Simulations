@@ -33,7 +33,7 @@
 
       print '(a)','****************************************************'
       print '(a)','***                                  '
-      print '(a)','***  Simulation de performances a partir de typages '
+      print '(a)','***  Simulation of performances from genotypes      '
       print '(a)','***                v1 - 11/02/2020                  '
       print '(a)','***                                                 '
       print '(a)','****************************************************'
@@ -44,129 +44,129 @@ c *** lecture des parametres ***
       vart=100.       
       separateur=' '
       
-      print *,'Nb de gros, moyens, petits QTL '
+      print *,'Nb de big, medium, small QTL '
       read (5,*) nqg,nqm,nqp
-      print *,'Gros, moyens, petits : ',nqg,nqm,nqp
+      print *,'Big, medium, small : ',nqg,nqm,nqp
 
-      print *,'h2, part de variance genetique due aux QTL'
+      print *,'h2, share of genetic variance due to QTLs'
       read (5,*) h2, pcqtl
-      print *,'h2 et part de variance des qtl : ',h2, pcqtl 
+      print *,'h2 and QTL share of genetic variance : ',h2, pcqtl 
 
-      print *,'Variances relatives des qtl gros moyens petits qtl'
+      print *,'Relatives variances of big, medium and small QTL'
       read (5,*) v1g,v1m,v1p
-      print *,'Var relatives des Gros, moyens, petits :',v1g,v1m,v1p
+      print *,'Relatives variance of big, medium, small :',v1g,v1m,v1p
 
-      print *,'Nombre de chromosomes (0 si un seul fichier)'
+      print *,'Number of chromosomes (0 if one file only)'
       read (5,*) nchrom
-      print *,'Nombre de chromosomes : ',nchrom  
+      print *,'Number chromosomes : ',nchrom  
       nchrom1=nchrom 
       if (nchrom.eq.0) then
         nchrom1=0; nchrom=1
         end if   
 
-      print *,'Fichier pedigree'
+      print *,'Pedigree file'
       read (5,*) ficped
-      print *,'Fichier pedigree : ',trim(ficped)
+      print *,'Pedigree file : ',trim(ficped)
 
-      print *,'Fichiers marqueurs en entree'
+      print *,'Markers file input'
       read (5,*) namechr
-      print *,'Fichier marqueur lu  : ',trim(namechr)
+      print *,'Read markers file  : ',trim(namechr)
 
-      print *,'Fichiers marqueurs en sortie (no si pas de sortie)'
+      print *,'Markers file output (no if no output)'
       read (5,*) namechrs
-      print *,'Fichier marqueur ecrit: ',trim(namechrs)
+      print *,'Markers file wrote: ',trim(namechrs)
     
-      print *,'Fichier info sur les QTL'
+      print *,'QTL info file'
       read (5,*) fichqtl
-      print *,'Fichier QTL : ',trim(fichqtl)
+      print *,'QTL info file : ',trim(fichqtl)
 
-      print *,'Fichier genotypes QTL'
+      print *,'QTL genotype files'
       read (5,*) fichtypq
-      print *,'Fichier genot QTL : ',trim(fichtypq)
+      print *,'QTL genotype files : ',trim(fichtypq)
 
-      print *,'Fichier performances'
+      print *,'Simulated performances file'
       read (5,*) fichperf
-      print *,'Fichier Perf : ',trim(fichperf)
+      print *,'Simulated performances file : ',trim(fichperf)
 
-      print *,'Fichier de frequences'
+      print *,'Frequency file'
       read (5,*) fichfreq
-      print *,'Fichier de frequences : ',trim(fichfreq)
+      print *,'Frequency file : ',trim(fichfreq)
 
       minmaf=0.05
-      print *,'Limite de MAF pour les QTL ?'
+      print *,'Minimum MAF for the QTLs ?'
       read (5,*,iostat=io) minmaf
-      print *,'Limite de MAF pour les QTL : ',minmaf
+      print *,'Minimum MAF for the QTL : ',minmaf
       if (minmaf.lt.0..or.minmaf.gt.0.5) stop 'Maf sup 0.5'
       
-      print *,'On garde les QTL dans le fichier marqueur ? (o/n)'
+      print *,'Do we keep QTL in the markers file ? (o/n)'
       optmq='o'
       read (5,*,iostat=io) optmq
       if (optmq.ne.'n'.and.optmq.ne.'o') stop 'o ou n'
-      if (optmq.eq.'n') print *,'Les qtl sont elimines des marqueurs'
-      if (optmq.eq.'o') print *,'Les marqueurs incluent les qtl'
+      if (optmq.eq.'n') print *,'QTLs are removed from markers'
+      if (optmq.eq.'o') print *,'QTLs are included in markers'
 
-      print *,'Format des fichiers de typages/phases input (P ou T) ?'
+      print *,'Format of typing/phases files input (P ou T) ?'
       fi='P'
       read (5,*,iostat=io) fi
       if (fi.eq.'p') fi='P'; if (fi.eq.'t') fi='T'; 
-      print *,'Format en entree : ',fi
-      if (fi.ne.'P'.and.fi.ne.'T') stop 'format different de P et T'
+      print *,'Input file : ',fi
+      if (fi.ne.'P'.and.fi.ne.'T') stop 'file format different from P and T'
 
-      print *,'Format des fichiers de typages/phases output (P ou T) ?'
+      print *,'Format of typing/phases files output (P ou T) ?'
       fo='T'
       read (5,*,iostat=io) fo
       if (fo.eq.'p') fo='P'; if (fo.eq.'t') fo='T'; 
-      print *,'Format en entree : ',fo
-      if (fo.ne.'P'.and.fo.ne.'T') stop 'format different de P et T'
+      print *,'Output file : ',fo
+      if (fo.ne.'P'.and.fo.ne.'T') stop 'file format different de P et T'
 
       print *,'Seed ?'
       read (5,*) seed2
       print *,'Seed : ',seed2
 
 
-c initialisation de la racine de tirage aleatoire
+c Initialization of the seed
       call init_random_seed(seed2)
 
-c Faut il d'autres formats ?           
+c Do we need other formats ?           
       if (namechrs.eq.'no'.and.fi.ne.fo) then
-        print *,'Pas de fichiers marqueurs demandes '
-        print *,'alors que les formats E/S sont differents ?'
+        print *,'No markers file asked '
+        print *,'while the I/O formats are different ?'
         stop
         end if
       if (namechrs.eq.'no'.and.optmq.eq.'n') then
-        print *,'Pas de fichiers marqueurs demandes '
-        print *,'alors que les qtl sont supprimes des marqueurs ?'
+        print *,'No markers file asked '
+        print *,'while the QTLs are removed from the markers?'
         stop
         end if
 
       tecrit=.true.
       if (namechrs.eq.'no') tecrit=.false.
       if (fi.eq.fo.and.namechrs.ne.'no'.and.optmq.eq.'o') then
-        print *,'La reecriture des fichiers marqueurs est inutile'
-        print *,'Elle n est pas realisee'
+        print *,'No need to rewrite the markers file '
+        print *,'it is not achieved'
         tecrit=.false.
         end if
 
       
-c lecture du fichier pedigree pour verifier qu'il est correct (irc de 1 a n, parent<produit) et compter
+c Read the pedigree file to check that it is correct (irc from 1 to n, parent<product) and count
       ng=0
       open (2,file=ficped,form='formatted')      
       do 
        read (2,*,iostat=io) irc,prc,mrc
        if (io.ne.0) exit
        ng=ng+1
-       if (ng.ne.irc) stop 'les individus non de 1 a n dans le pedigree'
-       if (prc.ge.irc) stop 'pere > individu'
-       if (mrc.ge.irc) stop 'mere > individu'
+       if (ng.ne.irc) stop 'individuals not from 1 to n in the pedigree'
+       if (prc.ge.irc) stop 'father > individuals'
+       if (mrc.ge.irc) stop 'mother > individuals'
        end do
       close (2)
-      print *,'Nombre d individus dans le pedigree : ',ng
+      print *,'Number of individuals in the pedigree : ',ng
       
-c y=phenotype, g=valeur genetique, typ=indicateur typé ou non
+c y=phenotype, g=genetic value, typ=typed or untyped indicator
       allocate (y(ng),g(ng),iani(ng),pere(ng),mere(ng),typ(ng))
       y(:)=0. ; typ(:)=.false.
 
-c 2eme lecture du fichier pedigree et stockage
+c 2nd reading of pedigree and stockage files
       open (2,file=ficped,form='formatted')      
       do i=1,ng
        read (2,*) irc,prc,mrc
@@ -176,28 +176,29 @@ c 2eme lecture du fichier pedigree et stockage
       close (2)
       
 
-c variance des qtl
+c QTL variance
       nq=nqg+nqm+nqp
-      print *,'Nombre de qtl : ', nq
+      print *,'QTL numbers : ', nq
 
-      if (v1p.le.0.) stop 'variance des petits qtl <= 0.'
-c on rapporte les variances de qtl à celle des petits qtl
+      if (v1p.le.0.) stop 'Variance of small QTLS <= 0.'
+      
+c We report the variances of QTL to that of the small QTL
       v1g=v1g/v1p
       v1m=v1m/v1p
 
-c xx variance expliquee par les qtl, en equivalent petits qtl
+c xx variance explained by QTL, in small QTL equivalent
       xx=nqg*v1g + nqm*v1m + nqp
       x=vart*h2*pcqtl/xx  ! part des petits qtl
       
-c vq=variance de chaque qtl, chr=chrom du qtl, imc=position intra chrom, imt=position globale, effet=effet, all=allele a effet positif
+c vq=variance of each QTL, chr=QTL chromosome, imc=intra chromosome position, imt=overall position, effet=effect, all=positive effect allele
       allocate (vq(nq),chr(nq),imc(nq),imt(nq),effet(nq),all(nq))
       do i=1, nqg; vq(i)=v1g*x;      end do
       do i=1, nqm; vq(nqp+i)=v1m*x;  end do
       do i=1, nqp; vq(nqp+nqm+i)=x; end do
 
 
-c on calcule le nombre de marqueurs par chrom et les freq alleliques
-c nmc = nb marq / chrom, nmcum = nb de marq cumules sur les chrom precedents, ncuq = ?
+c we calculate the number of markers per chromosome and the allelic frequency
+c nmc = nb marq / chrom, nmcum = numbers of cumulated markers in previous chromosomes, ncuq = ?
       allocate (nmc(nchrom),nmcum(nchrom+1),ncuq(nchrom+1))
       do i=1, nchrom; nmc(i)=0; end do
       nm=0 ; ntyp=0 ; nmax=0
