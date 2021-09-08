@@ -110,14 +110,14 @@
       read (5,*,iostat=io) fi
       if (fi.eq.'p') fi='P'; if (fi.eq.'t') fi='T'; 
       print *,'Input file : ',fi
-      if (fi.ne.'P'.and.fi.ne.'T') stop 'file format different from P and T'
+      if (fi.ne.'P'.and.fi.ne.'T') stop 'file format dif from P and T'
 
       print *,'Format of typing/phases files output (P ou T) ?'
       fo='T'
       read (5,*,iostat=io) fo
       if (fo.eq.'p') fo='P'; if (fo.eq.'t') fo='T'; 
       print *,'Output file : ',fo
-      if (fo.ne.'P'.and.fo.ne.'T') stop 'file format different de P et T'
+      if (fo.ne.'P'.and.fo.ne.'T') stop 'file format dif from P and T'
 
       print *,'Seed ?'
       read (5,*) seed2
@@ -193,8 +193,8 @@
 ! vq=variance of each QTL, chr=QTL chromosome, imc=intra chromosome position, imt=overall position, effet=effect, all=positive effect allele
       allocate (vq(nq),chr(nq),imc(nq),imt(nq),effet(nq),all(nq))
       do i=1, nqg; vq(i)=v1g*x;      end do
-      do i=1, nqm; vq(nqp+i)=v1m*x;  end do
-      do i=1, nqp; vq(nqp+nqm+i)=x; end do
+      do i=1, nqm; vq(nqg+i)=v1m*x;  end do
+      do i=1, nqp; vq(nqg+nqm+i)=x; end do
 
 
 ! we calculate the number of markers per chromosome and the allelic frequency
@@ -330,7 +330,7 @@
 
 ! we randomly chose the QTLs in the np possibilites, we keep the info, remove it from the list and continue with the next marker
       do i=1, nq
-        j=1+np*rand(x)
+!        j=1+np*rand(x)
         call random_number(x)
         j=1 + np*x
 	if (j.lt.1.or.j.gt.np) stop 'Error in the QTL drawing'  
